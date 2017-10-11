@@ -1,0 +1,37 @@
+gc_platform_home:
+    path:      /{page}
+    defaults: { _controller: GCPlatformBundle:Advert:index, page:    1 }
+    requirements:
+          page: \d*
+
+
+gc_platform_view:
+    path:      /advert/{id}
+    defaults: { _controller: GCPlatformBundle:Advert:view }
+    requirements:
+          page: \d+
+
+gc_platform_add:
+    path:      /add
+    defaults: { _controller: GCPlatformBundle:Advert:add }
+
+oc_platform_edit:
+    path:      /edit/{id}
+    defaults: { _controller: GCPlatformBundle:Advert:edit }
+    requirements:
+          id: \d+
+
+
+oc_platform_delete:
+    path:      /delete/{id}
+    defaults: { _controller: GCPlatformBundle:Advert:delete }
+    requirements:
+           id: \d+
+
+gc_platform_view_slug:
+    path:      /{year}/{slug}.{_format}
+    defaults: { _controller: GCPlatformBundle:Advert:viewSlug, format:      html }
+    requirements:
+#    /d{4} veut dire 4 chiffres à la suite
+            year:   \d{4}
+            format: html|xml
