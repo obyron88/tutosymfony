@@ -76,7 +76,7 @@ class AdvertController extends Controller
         $session->set('user_id', 91);
 
         // On n'oublie pas de renvoyer une réponse
-        return new Response("<body>Je suis une page de test, je n'ai rien à dire</body>");
+        return new Response("<body>Je suis une page de test, je n'ai rien à dire.</body>");
     }
     public function indexAction()
     {
