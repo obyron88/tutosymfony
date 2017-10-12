@@ -15,14 +15,14 @@ gc_platform_add:
     path:      /add
     defaults: { _controller: GCPlatformBundle:Advert:add }
 
-oc_platform_edit:
+gc_platform_edit:
     path:      /edit/{id}
     defaults: { _controller: GCPlatformBundle:Advert:edit }
     requirements:
           id: \d+
 
 
-oc_platform_delete:
+gc_platform_delete:
     path:      /delete/{id}
     defaults: { _controller: GCPlatformBundle:Advert:delete }
     requirements:
