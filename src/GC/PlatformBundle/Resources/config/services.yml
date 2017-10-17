@@ -1,4 +1,10 @@
 services:
+    gc_platform.antispam:
+        class: GC\PlatformBundle\Antispam\GCAntispam
+        arguments:
+            - "@mailer"
+            - %locale%
+            - 50
 #    gc_platform.example:
 #        class: GC\PlatformBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]
