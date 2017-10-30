@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Application
 {
     /**
-     * @ORM\ManyToOne(targetEntity="GC\PlatformBundle\Entity\Advert")
+     * @ORM\ManyToOne(targetEntity="GC\PlatformBundle\Entity\Advert", inversedBy="applications")
      * @ORM\JoinColumn(nullable=false)
      */
     private $advert;

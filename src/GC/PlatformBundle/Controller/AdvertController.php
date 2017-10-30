@@ -1,7 +1,7 @@
 <?php
 namespace GC\PlatformBundle\Controller;
 
-
+use GC\PlatformBundle\Entity\AdvertSkill;
 use GC\PlatformBundle\Entity\Advert;
 use GC\PlatformBundle\Entity\Application;
 use GC\PlatformBundle\Entity\Image;
@@ -33,27 +33,40 @@ class AdvertController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         // On récupère l'annonce $id
-        $advert = $em->getRepository('GCPlatformBundle:Advert')->find($id);
+        $advert = $em
+            ->getRepository('GCPlatformBundle:Advert')
+            ->find($id)
+        ;
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        // On récupère la liste des candidatures de cette annonce
+        // On avait déjà récupéré la liste des candidatures
         $listApplications = $em
             ->getRepository('GCPlatformBundle:Application')
             ->findBy(array('advert' => $advert))
         ;
 
+        // On récupère maintenant la liste des AdvertSkill
+        $listAdvertSkills = $em
+            ->getRepository('GCPlatformBundle:AdvertSkill')
+            ->findBy(array('advert' => $advert))
+        ;
+
         return $this->render('GCPlatformBundle:Advert:view.html.twig', array(
             'advert'           => $advert,
-            'listApplications' => $listApplications
+            'listApplications' => $listApplications,
+            'listAdvertSkills' => $listAdvertSkills
         ));
     }
     // Ajoutez cette méthode :
 
     public function addAction(Request $request)
     {
+        // On récupère l'EntityManager
+        $em = $this->getDoctrine()->getManager();
+
         // Création de l'entité
         $advert = new Advert();
         $advert->setTitle('Recherche développeur Symfony.');
@@ -62,6 +75,7 @@ class AdvertController extends Controller
         $advert->setDate(new \Datetime());
         // On peut ne pas définir ni la date ni la publication,
         // car ces attributs sont définis automatiquement dans le constructeur
+        // On récupère toutes les compétences possibles
 
         // Création de l'entité Image
         $image = new Image();
@@ -85,10 +99,27 @@ class AdvertController extends Controller
         $application1->setAdvert($advert);
         $application2->setAdvert($advert);
 
-        // On récupère l'EntityManager
-        $em = $this->getDoctrine()->getManager();
+        $listSkills = $em->getRepository('GCPlatformBundle:Skill')->findAll();
 
-        // Étape 1 : On « persiste » l'entité
+        // Pour chaque compétence
+        foreach ($listSkills as $skill) {
+            // On crée une nouvelle « relation entre 1 annonce et 1 compétence »
+            $advertSkill = new AdvertSkill();
+
+            // On la lie à l'annonce, qui est ici toujours la même
+            $advertSkill->setAdvert($advert);
+            // On la lie à la compétence, qui change ici dans la boucle foreach
+            $advertSkill->setSkill($skill);
+
+            // Arbitrairement, on dit que chaque compétence est requise au niveau 'Expert'
+            $advertSkill->setLevel('Expert');
+
+            // Et bien sûr, on persiste cette entité de relation, propriétaire des deux autres relations
+            $em->persist($advertSkill);
+        }
+
+        // Doctrine ne connait pas encore l'entité $advert. Si vous n'avez pas défini la relation AdvertSkill
+        // avec un cascade persist (ce qui est le cas si vous avez utilisé mon code), alors on doit persister $advert
         $em->persist($advert);
 
         // Étape 1 ter : pour cette relation pas de cascade lorsqu'on persiste Advert, car la relation est

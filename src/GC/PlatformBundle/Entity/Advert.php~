@@ -13,6 +13,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Advert
 {
     /**
+     * @ORM\OneToMany(targetEntity="GC\PlatformBundle\Entity\Application", mappedBy="advert")
+     */
+    private $applications; // Notez le « s », une annonce est liée à plusieurs candidatures
+
+    /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
@@ -42,7 +47,7 @@ class Advert
     private $title;
 
     /**
-     * @ORM\ManyToMany(targetEntity="OC\PlatformBundle\Entity\Category", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="GC\PlatformBundle\Entity\Category", cascade={"persist"})
      */
     private $categories;
 
@@ -220,5 +225,46 @@ class Advert
     public function getImage()
     {
         return $this->image;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add category
+     *
+     * @param \GC\PlatformBundle\Entity\Category $category
+     *
+     * @return Advert
+     */
+    public function addCategory(\GC\PlatformBundle\Entity\Category $category)
+    {
+        $this->categories[] = $category;
+
+        return $this;
+    }
+
+    /**
+     * Remove category
+     *
+     * @param \GC\PlatformBundle\Entity\Category $category
+     */
+    public function removeCategory(\GC\PlatformBundle\Entity\Category $category)
+    {
+        $this->categories->removeElement($category);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }
